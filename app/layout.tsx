@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="pt">
       <body
-        className={`${inter.variable} ${chivo.variable}`}
+        className={`${inter.variable} ${chivo.variable} font-chivo`}
       >
         {children}
       </body>

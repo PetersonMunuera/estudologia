@@ -12,9 +12,11 @@
   --gray-500: #7D8DA6;
   --gray-600: #5D6A86;
 
-  --purple-gradient: linear-gradient(#502DB3, #5D2EE3);
   --purple-100: #E3DFEF;
+  --purple-300: #5D2EE3;
+  --purple-400: #502DB3;
   --purple-500: #442B8C;
+  --purple-900: #141736;
 
   --green-100: #E1F5D5;
   --green-500: #219653;

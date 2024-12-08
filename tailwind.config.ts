@@ -15,9 +15,11 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        ["primary-gradient"]: "var(--purple-gradient)",
-        ["primary-100"]: "var(--purple-100)",
+        ["purple-100"]: "var(--purple-100)",
+        ["purple-300"]: "var(--purple-300)",
+        ["purple-400"]: "var(--purple-400)",
         ["purple-500"]: "var(--purple-500)",
+        ["purple-900"]: "var(--purple-900)",
         ["gray-100"]: "var(--gray-100)",
         ["gray-200"]: "var(--gray-200)",
         ["gray-300"]: "var(--gray-300)",
