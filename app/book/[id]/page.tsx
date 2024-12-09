@@ -1,14 +1,17 @@
 "use client";
-
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
-import { useParams } from "next/navigation"
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { QuestionsBooksContext } from "@/app/contexts/questionsBooksContext";
 import { QuestionType } from "@/app/@types/questionsBook";
 import { FinishBookModal } from "@/app/components/finishBookModal";
-import Image from "next/image";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import logoImg from "@/app/assets/logo.svg";
 import editIcon from "@/app/icons/edit.svg";
@@ -16,18 +19,51 @@ import clockIcon from "@/app/icons/clock.svg";
 import arrowLeftIcon from "@/app/icons/arrow-left.svg";
 import arrowRightIcon from "@/app/icons/arrow-right.svg";
 
+const answerFormSchema = z.object({
+  answer: z.string().min(1),
+});
+
+type AnswerFormData = z.infer<typeof answerFormSchema>;
+
 export default function Questions() {
-  const { id: bookId } = useParams()
-  const searchParams = useSearchParams()
-  const { questionsBooks } = useContext(QuestionsBooksContext)
+  const router = useRouter();
+  const { id: bookId } = useParams();
+  const searchParams = useSearchParams();
+  const { questionsBooks, setQuestionAnswer } = useContext(QuestionsBooksContext);
 
-  const questionIndex = searchParams.get('question') || "1"
-  const questionsBook = questionsBooks.filter(book => book.id === bookId)[0]
-  const questionsNumber = questionsBook.questions.length
-  const currentQuestion: QuestionType = questionsBook.questions[Number(questionIndex)-1]
+  const questionIndex = searchParams.get("question") || "1";
+  const questionsBook = questionsBooks.filter((book) => book.id === bookId)[0];
+  const questionsNumber = questionsBook.questions.length;
+  const currentQuestion: QuestionType = questionsBook.questions[Number(questionIndex) - 1];
 
-  const isFirstQuestion = Number(questionIndex) === 1
-  const isLastQuestion = Number(questionIndex) === questionsNumber
+  const isFirstQuestion = Number(questionIndex) === 1;
+  const isLastQuestion = Number(questionIndex) === questionsNumber;
+
+  const questionIndexFormatted = questionIndex.padStart(2, "0");
+  const questionsNumberFormatted = questionsNumber.toString().padStart(2, "0");
+
+  const { register, handleSubmit, reset, setValue } = useForm<AnswerFormData>({
+    resolver: zodResolver(answerFormSchema),
+  });
+
+  useEffect(() => {
+    setValue('answer', currentQuestion.answer)
+  }, [currentQuestion, setValue])
+
+  function handleSubmitAnswer(data: AnswerFormData) {
+    setQuestionAnswer({
+      questionIndex: Number(questionIndex) - 1,
+      bookId: questionsBook.id,
+      answerText: data.answer,
+      timeSpent: 10000,
+    });
+
+    reset();
+
+    if (!isLastQuestion) {
+      router.push(`?question=${Number(questionIndex) + 1}`);
+    }
+  }
 
   return (
     <div>
@@ -49,30 +85,47 @@ export default function Questions() {
         </div>
       </div>
       <main className="w-[750px] mx-auto mt-16">
-        <h2 className="font-bold">{currentQuestion.title} {questionIndex}/{questionsNumber}</h2>
-        <p className="mt-4 text-black">
-          {currentQuestion.text}
-        </p>
-        <textarea
-          className="resize-none outline-none bg-gray-100 rounded-[5px] p-3 mt-6 mb-10 w-full h-[196px] text-sm"
-          placeholder="Escreva sua resposta aqui"
-          name="answer"
-        />
+        <h2 className="font-bold">
+          {currentQuestion.title} {questionIndexFormatted}/
+          {questionsNumberFormatted}
+        </h2>
+        <p className="mt-4 text-black">{currentQuestion.text}</p>
+        <form onSubmit={handleSubmit(handleSubmitAnswer)} id="answer-form">
+          <textarea
+            className="resize-none outline-none bg-gray-100 rounded-[5px] p-3 mt-6 mb-10 w-full h-[196px] text-sm"
+            placeholder="Escreva sua resposta aqui"
+            {...register("answer")}
+          />
+        </form>
 
-        <Dialog.Root>
-          <Dialog.Trigger asChild>
-            <button className="bg-gradient-to-r from-purple-400 to-purple-300 font-bold text-white rounded-full py-2 px-10">
-              Enviar resposta
-            </button>
-          </Dialog.Trigger>
+        {isLastQuestion ? (
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              <button
+                className="bg-gradient-to-r from-purple-400 to-purple-300 font-bold text-white rounded-full py-2 px-10"
+                type="submit"
+                form="answer-form"
+              >
+                Enviar resposta e finalizar
+              </button>
+            </Dialog.Trigger>
 
-          <FinishBookModal />
-        </Dialog.Root>
+            <FinishBookModal />
+          </Dialog.Root>
+        ) : (
+          <button
+            className="bg-gradient-to-r from-purple-400 to-purple-300 font-bold text-white rounded-full py-2 px-10"
+            type="submit"
+            form="answer-form"
+          >
+            Enviar resposta
+          </button>
+        )}
 
         <footer className="mt-8 border-t-2 border-gray-100 flex pt-6">
           {!isFirstQuestion && (
             <Link
-              href={`?question=${Number(questionIndex)-1}`}
+              href={`?question=${Number(questionIndex) - 1}`}
               className="flex flex-wrap gap-2 content-center font-inter"
             >
               <Image src={arrowLeftIcon} alt="Anterior" />
@@ -81,7 +134,7 @@ export default function Questions() {
           )}
           {!isLastQuestion && (
             <Link
-              href={`?question=${Number(questionIndex)+1}`}
+              href={`?question=${Number(questionIndex) + 1}`}
               className="flex flex-wrap gap-2 content-center font-inter ml-auto"
             >
               <span>Próxima</span>

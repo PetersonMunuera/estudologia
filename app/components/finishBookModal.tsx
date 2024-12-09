@@ -1,11 +1,24 @@
 "use client";
-
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import trophyImage from "@/app/assets/trophy.svg";
 import clockIcon from "@/app/icons/clock.svg";
+import { useContext } from "react";
+import { QuestionsBooksContext } from "../contexts/questionsBooksContext";
+import { useParams, useRouter } from "next/navigation";
 
 export function FinishBookModal() {
+  const { questionsBooks, setQuestionsBookAsAnswered } = useContext(QuestionsBooksContext)
+  const { id: bookId } = useParams();
+  const router = useRouter();
+  
+  const questionsBook = questionsBooks.filter((book) => book.id === bookId)[0];
+
+  function finishBook() {
+    setQuestionsBookAsAnswered(questionsBook.id)
+    router.replace('/')
+  }
+
   return (
     <Dialog.Portal>
       <Dialog.Overlay className="fixed w-screen h-screen bg-black opacity-25 inset-0" />
@@ -26,7 +39,7 @@ export function FinishBookModal() {
         </div>
         <Dialog.Close asChild>
           <button
-            onClick={() => console.log("valeu")}
+            onClick={finishBook}
             className="border border-purple-500 text-purple-500 font-bold text-sm rounded-full py-2 px-[86px] w-fit mx-auto hover:bg-purple-500 hover:text-white transition-all"
           >
             Valeu!
