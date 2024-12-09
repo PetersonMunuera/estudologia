@@ -44,7 +44,7 @@ export default function AnswersPage() {
           ))}
         </nav>
         <div className="mt-10">
-        <div className="flex mb-10">
+        <div className="relative flex h-10">
           <Timer secondsPassed={secondsPassed} />
         </div>
           {currentQuestions?.map((question, index) => (
