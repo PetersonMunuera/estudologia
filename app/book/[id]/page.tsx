@@ -21,7 +21,7 @@ import arrowRightIcon from "@/app/icons/arrow-right.svg";
 import { differenceInSeconds } from "date-fns";
 
 const answerFormSchema = z.object({
-  answer: z.string().min(1),
+  answer: z.string().min(1).max(300),
 });
 
 type AnswerFormData = z.infer<typeof answerFormSchema>;
@@ -45,9 +45,15 @@ export default function Questions() {
   const questionIndexFormatted = questionIndex.padStart(2, "0");
   const questionsNumberFormatted = questionsNumber.toString().padStart(2, "0");
 
-  const { register, handleSubmit, reset, setValue } = useForm<AnswerFormData>({
+  const { register, handleSubmit, reset, setValue, watch } = useForm<AnswerFormData>({
     resolver: zodResolver(answerFormSchema),
+    defaultValues: {
+      answer: ''
+    }
   });
+
+  const answerField = watch('answer')
+  const answerFieldLength = answerField.length
 
   const [secondsPassed, setSecondsPassed] = useState(currentQuestion.timeSpent);
 
@@ -130,12 +136,14 @@ export default function Questions() {
           {questionsNumberFormatted}
         </h2>
         <p className="mt-4 text-black">{currentQuestion.text}</p>
-        <form onSubmit={handleSubmit(handleSubmitAnswer)} id="answer-form">
+        <form className="relative" onSubmit={handleSubmit(handleSubmitAnswer)} id="answer-form">
           <textarea
-            className="resize-none outline-none bg-gray-100 rounded-[5px] p-3 mt-6 mb-10 w-full h-[196px] text-sm"
+            className="resize-none outline-none bg-gray-100 rounded-[5px] p-3 pr-24 mt-6 mb-10 w-full h-[196px] text-sm"
             placeholder="Escreva sua resposta aqui"
+            maxLength={300}
             {...register("answer")}
           />
+          <span className="absolute right-4 top-8 text-sm">{answerFieldLength}/300</span>
         </form>
 
         {isLastQuestion ? (
