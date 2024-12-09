@@ -8,6 +8,8 @@ import clockIcon from "@/app/icons/clock.svg";
 import arrowLeftIcon from "@/app/icons/arrow-left.svg";
 import arrowRightIcon from "@/app/icons/arrow-right.svg";
 import Link from "next/link";
+import * as Dialog from "@radix-ui/react-dialog";
+import { FinishBookModal } from "@/app/components/finishBookModal";
 
 export default function Questions() {
   // const { id } = useParams()
@@ -26,7 +28,7 @@ export default function Questions() {
         </div>
         <div className="flex gap-2 py-2 px-5 border border-gray-500 rounded-[10px] absolute right-0">
           <Image src={clockIcon} alt="Relógio" />
-          <div className="flex flex-wrap text-sm content-center">
+          <div className="flex flex-wrap text-sm leading-normal content-center">
             <span>00</span>:<span>00</span>:<span>00</span>
           </div>
         </div>
@@ -44,15 +46,29 @@ export default function Questions() {
           placeholder="Escreva sua resposta aqui"
           name="answer"
         />
-        <button className="bg-gradient-to-r from-purple-400 to-purple-300 font-bold text-white rounded-full py-2 px-10">
-          Enviar resposta
-        </button>
+
+        <Dialog.Root>
+          <Dialog.Trigger asChild>
+            <button className="bg-gradient-to-r from-purple-400 to-purple-300 font-bold text-white rounded-full py-2 px-10">
+              Enviar resposta
+            </button>
+          </Dialog.Trigger>
+
+          <FinishBookModal />
+        </Dialog.Root>
+
         <footer className="mt-8 border-t-2 border-gray-100 flex justify-between pt-6">
-          <Link href="?question=1" className="flex flex-wrap gap-2 content-center font-inter">
+          <Link
+            href="?question=1"
+            className="flex flex-wrap gap-2 content-center font-inter"
+          >
             <Image src={arrowLeftIcon} alt="Anterior" />
             <span>Anterior</span>
           </Link>
-          <Link href="?question=2" className="flex flex-wrap gap-2 content-center font-inter">
+          <Link
+            href="?question=2"
+            className="flex flex-wrap gap-2 content-center font-inter"
+          >
             <span>Próxima</span>
             <Image src={arrowRightIcon} alt="Próxima" />
           </Link>
