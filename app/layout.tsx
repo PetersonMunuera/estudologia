@@ -1,6 +1,7 @@
 import { Chivo, Inter } from 'next/font/google'
 import type { Metadata } from "next";
 import "./globals.css";
+import { QuestionsBooksProvider } from './contexts/questionsBooksContext';
 
 export const metadata: Metadata = {
   title: "Estudologia",
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${chivo.variable} font-chivo`}
       >
-        {children}
+        <QuestionsBooksProvider>
+          {children}
+        </QuestionsBooksProvider>
       </body>
     </html>
   );

@@ -3,20 +3,14 @@
 import Image from "next/image";
 import editIcon from "@/app/icons/edit.svg";
 import { useRouter } from "next/navigation";
-
-export interface QuestionsBook {
-  id: number;
-  title: string;
-  questionsNumber: number;
-  answered: boolean;
-}
-
+import { QuestionsBookType } from "../@types/questionsBook";
 interface QuestionsBookProps {
-  bookData: QuestionsBook
+  bookData: QuestionsBookType
 }
 
 export function QuestionsBook({ bookData }: QuestionsBookProps) {
   const router = useRouter()
+  const questionsNumber = bookData.questions.length
 
   return (
     <div className="border border-gray-300 rounded-[20px] p-6 flex flex-col gap-5">
@@ -30,7 +24,7 @@ export function QuestionsBook({ bookData }: QuestionsBookProps) {
         </strong>
       </div>
       <div className="font-inter font-medium text-[0.75rem]">
-        <span>{bookData.questionsNumber}</span> questões
+        <span>{questionsNumber}</span> questões
       </div>
       <button
         className="enabled:bg-gradient-to-r from-purple-400 to-purple-300 font-bold text-white rounded-full p-2 disabled:cursor-not-allowed disabled:bg-purple-100"
