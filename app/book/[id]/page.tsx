@@ -164,22 +164,22 @@ export default function Questions() {
 
         <footer className="mt-8 border-t-2 border-gray-100 flex pt-6">
           {!isFirstQuestion && (
-            <button
+            <div
               onClick={goToPreviousQuestion}
-              className="flex flex-wrap gap-2 content-center font-inter"
+              className="flex flex-wrap gap-2 content-center font-inter cursor-pointer"
             >
-              <Image src={arrowLeftIcon} alt="Anterior" />
+              <Image src={arrowLeftIcon} width={16} height={10} alt="Anterior" />
               <span>Anterior</span>
-            </button>
+            </div>
           )}
           {!isLastQuestion && (
-            <button
+            <div
               onClick={goToNextQuestion}
-              className="flex flex-wrap gap-2 content-center font-inter ml-auto"
+              className="flex flex-wrap gap-2 content-center font-inter ml-auto cursor-pointer"
             >
               <span>Próxima</span>
-              <Image src={arrowRightIcon} alt="Próxima" />
-            </button>
+              <Image src={arrowRightIcon} width={16} height={10} alt="Próxima" />
+            </div>
           )}
         </footer>
       </main>

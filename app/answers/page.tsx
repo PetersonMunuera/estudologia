@@ -22,8 +22,6 @@ export default function AnswersPage() {
     return seconds + question.timeSpent
   }, 0)
 
-  console.log(currentQuestions)
-
   return (
     <div>
       <Header />
