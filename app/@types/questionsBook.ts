@@ -1,5 +1,6 @@
-interface QuestionType {
+export interface QuestionType {
   title: string;
+  text: string;
   answer: string;
   timeSpent: number;
 }
