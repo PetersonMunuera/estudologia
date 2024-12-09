@@ -1,7 +1,6 @@
 "use client";
-
-import Link from "next/link";
 import { Header } from "./components/header";
+import { NavigationMenu } from "./components/navigationMenu";
 import { QuestionsBook } from "./components/questionsBook";
 import { useState } from "react";
 
@@ -33,15 +32,7 @@ export default function Home() {
     <div>
       <Header />
       <div className="w-[966px] mx-auto">
-        <nav className="my-10 flex gap-10 text-xl font-bold text-gray-200">
-          <Link
-            href="/"
-            className="text-purple-300 pb-1 border-b border-purple-300"
-          >
-            Questões
-          </Link>
-          <Link href="/answers">Respostas</Link>
-        </nav>
+        <NavigationMenu />
         <main>
           <form className="flex gap-2">
             <input

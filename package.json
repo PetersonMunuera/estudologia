@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",
+    "feather-icons-react": "^0.7.0",
     "next": "14.2.20",
     "react": "^18",
     "react-dom": "^18"
