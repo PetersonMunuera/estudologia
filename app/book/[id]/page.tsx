@@ -9,7 +9,7 @@ import { useContext, useEffect, useState } from "react";
 import { QuestionsBooksContext } from "@/app/contexts/questionsBooksContext";
 import { QuestionType } from "@/app/@types/questionsBook";
 import { FinishBookModal } from "@/app/components/finishBookModal";
-import { Timer } from "./timer";
+import { Timer } from "../../components/timer";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,6 +74,12 @@ export default function Questions() {
       bookId: questionsBook.id,
       questionIndex: Number(questionIndex) - 1,
       answer: data.answer,
+    });
+
+    setQuestionTimeSpent({
+      bookId: questionsBook.id,
+      questionIndex: Number(questionIndex) - 1,
+      timeSpent: secondsPassed,
     });
 
     goToNextQuestion()

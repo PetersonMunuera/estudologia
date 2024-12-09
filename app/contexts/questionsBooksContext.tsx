@@ -27,8 +27,7 @@ interface QuestionsBooksProvider {
 }
 
 export function QuestionsBooksProvider({ children }: QuestionsBooksProvider) {
-  const [questionsBooks, setQuestionsBooks] =
-    useState<QuestionsBookType[]>(questionsBooksData);
+  const [questionsBooks, setQuestionsBooks] = useState<QuestionsBookType[]>(questionsBooksData);
 
   function setQuestionAnswer(answerData: {
     bookId: string;

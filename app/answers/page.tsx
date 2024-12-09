@@ -7,6 +7,7 @@ import { Header } from "../components/header";
 import { NavigationMenu } from "../components/navigationMenu";
 import { useContext } from "react";
 import { QuestionsBooksContext } from "../contexts/questionsBooksContext";
+import { Timer } from "../components/timer";
 
 export default function AnswersPage() {
   const searchParams = useSearchParams();
@@ -14,7 +15,14 @@ export default function AnswersPage() {
 
   const { questionsBooks } = useContext(QuestionsBooksContext)
 
-  const currentQuestions = questionsBooks.find(book => book.id === bookParam)?.questions
+  const currentBook = questionsBooks.filter(book => book.id === bookParam)[0]
+  const currentQuestions = currentBook.questions
+
+  const secondsPassed = currentQuestions.reduce((seconds, question) => {
+    return seconds + question.timeSpent
+  }, 0)
+
+  console.log(currentQuestions)
 
   return (
     <div>
@@ -38,6 +46,9 @@ export default function AnswersPage() {
           ))}
         </nav>
         <div className="mt-10">
+        <div className="flex mb-10">
+          <Timer secondsPassed={secondsPassed} />
+        </div>
           {currentQuestions?.map((question, index) => (
             <div key={question.title} className={`pb-12 mb-4 ${index != currentQuestions.length-1 && 'border-b-2 border-gray-100'}`}>
               <h2 className="font-bold text-black">{question.title}</h2>

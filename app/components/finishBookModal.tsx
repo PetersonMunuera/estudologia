@@ -16,8 +16,19 @@ export function FinishBookModal() {
 
   function finishBook() {
     setQuestionsBookAsAnswered(questionsBook.id)
-    router.replace('/')
+
+    const hasBookToAnswer = questionsBooks.filter(book => !book.answered)
+
+    const route = !hasBookToAnswer.length ? '/answers' : '/'
+
+    router.replace(route)
   }
+
+  const totalMinutesAmount = questionsBook.questions.reduce((minutes, question) => {
+    return minutes + question.timeSpent / 60
+  }, 0)
+
+  const totalMinutes = String(Math.floor(totalMinutesAmount)).padStart(2, '0')
 
   return (
     <Dialog.Portal>
@@ -35,7 +46,7 @@ export function FinishBookModal() {
         </div>
         <div className="flex flex-wrap gap-1 content-center mx-auto">
           <Image src={clockIcon} alt="Relógio" />
-          <span className="text-sm leading-normal">40 min de prova</span>
+          <span className="text-sm leading-normal">{totalMinutes} min de prova</span>
         </div>
         <Dialog.Close asChild>
           <button
