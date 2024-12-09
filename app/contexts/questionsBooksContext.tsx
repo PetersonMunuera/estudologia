@@ -8,7 +8,11 @@ interface QuestionsBooksContextType {
   setQuestionAnswer: (answerData: {
     bookId: string;
     questionIndex: number;
-    answerText: string;
+    answer: string;
+  }) => void;
+  setQuestionTimeSpent: (answerData: {
+    bookId: string;
+    questionIndex: number;
     timeSpent: number;
   }) => void;
   setQuestionsBookAsAnswered: (bookId: string) => void;
@@ -29,22 +33,47 @@ export function QuestionsBooksProvider({ children }: QuestionsBooksProvider) {
   function setQuestionAnswer(answerData: {
     bookId: string;
     questionIndex: number;
-    answerText: string;
-    timeSpent: number;
+    answer: string;
   }) {
+    const { bookId, answer, questionIndex } = answerData;
+
     const updatedQuestionsBooks = [...questionsBooks];
 
     updatedQuestionsBooks.forEach((book) => {
-      if (book.id === answerData.bookId) {
-        const question = book.questions[answerData.questionIndex];
+      if (book.id === bookId) {
+        const question = book.questions[questionIndex];
 
         const updatedQuestion = {
           ...question,
-          answer: answerData.answerText,
-          timeSpent: answerData.timeSpent,
+          answer,
         };
 
-        book.questions[answerData.questionIndex] = updatedQuestion;
+        book.questions[questionIndex] = updatedQuestion;
+      }
+    });
+
+    setQuestionsBooks(updatedQuestionsBooks);
+  }
+
+  function setQuestionTimeSpent(answerData: {
+    bookId: string;
+    questionIndex: number;
+    timeSpent: number;
+  }) {
+    const { bookId, timeSpent, questionIndex } = answerData;
+
+    const updatedQuestionsBooks = [...questionsBooks];
+
+    updatedQuestionsBooks.forEach((book) => {
+      if (book.id === bookId) {
+        const question = book.questions[questionIndex];
+
+        const updatedQuestion = {
+          ...question,
+          timeSpent,
+        };
+
+        book.questions[questionIndex] = updatedQuestion;
       }
     });
 
@@ -68,6 +97,7 @@ export function QuestionsBooksProvider({ children }: QuestionsBooksProvider) {
       value={{
         questionsBooks,
         setQuestionAnswer,
+        setQuestionTimeSpent,
         setQuestionsBookAsAnswered,
       }}
     >

@@ -5,19 +5,20 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { QuestionsBooksContext } from "@/app/contexts/questionsBooksContext";
 import { QuestionType } from "@/app/@types/questionsBook";
 import { FinishBookModal } from "@/app/components/finishBookModal";
+import { Timer } from "./timer";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import logoImg from "@/app/assets/logo.svg";
 import editIcon from "@/app/icons/edit.svg";
-import clockIcon from "@/app/icons/clock.svg";
 import arrowLeftIcon from "@/app/icons/arrow-left.svg";
 import arrowRightIcon from "@/app/icons/arrow-right.svg";
+import { differenceInSeconds } from "date-fns";
 
 const answerFormSchema = z.object({
   answer: z.string().min(1),
@@ -29,12 +30,14 @@ export default function Questions() {
   const router = useRouter();
   const { id: bookId } = useParams();
   const searchParams = useSearchParams();
-  const { questionsBooks, setQuestionAnswer } = useContext(QuestionsBooksContext);
+  const { questionsBooks, setQuestionAnswer, setQuestionTimeSpent } =
+    useContext(QuestionsBooksContext);
 
   const questionIndex = searchParams.get("question") || "1";
   const questionsBook = questionsBooks.filter((book) => book.id === bookId)[0];
   const questionsNumber = questionsBook.questions.length;
-  const currentQuestion: QuestionType = questionsBook.questions[Number(questionIndex) - 1];
+  const currentQuestion: QuestionType =
+    questionsBook.questions[Number(questionIndex) - 1];
 
   const isFirstQuestion = Number(questionIndex) === 1;
   const isLastQuestion = Number(questionIndex) === questionsNumber;
@@ -46,23 +49,59 @@ export default function Questions() {
     resolver: zodResolver(answerFormSchema),
   });
 
+  const [secondsPassed, setSecondsPassed] = useState(currentQuestion.timeSpent);
+
   useEffect(() => {
-    setValue('answer', currentQuestion.answer)
-  }, [currentQuestion, setValue])
+    const timerStarted = new Date();
+
+    const interval = setInterval(() => {
+      const secondsDifference = differenceInSeconds(new Date(), timerStarted);
+
+      setSecondsPassed(currentQuestion.timeSpent + secondsDifference);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [setSecondsPassed, currentQuestion]);
+
+  useEffect(() => {
+    setValue("answer", currentQuestion.answer);
+  }, [currentQuestion, setValue]);
 
   function handleSubmitAnswer(data: AnswerFormData) {
     setQuestionAnswer({
-      questionIndex: Number(questionIndex) - 1,
       bookId: questionsBook.id,
-      answerText: data.answer,
-      timeSpent: 10000,
+      questionIndex: Number(questionIndex) - 1,
+      answer: data.answer,
     });
 
+    goToNextQuestion()
     reset();
+  }
 
-    if (!isLastQuestion) {
-      router.push(`?question=${Number(questionIndex) + 1}`);
-    }
+  function goToNextQuestion() {
+    if (isLastQuestion) return;
+
+    setQuestionTimeSpent({
+      bookId: questionsBook.id,
+      questionIndex: Number(questionIndex) - 1,
+      timeSpent: secondsPassed,
+    });
+
+    router.push(`?question=${Number(questionIndex) + 1}`);
+  }
+
+  function goToPreviousQuestion() {
+    if (isFirstQuestion) return;
+
+    setQuestionTimeSpent({
+      bookId: questionsBook.id,
+      questionIndex: Number(questionIndex) - 1,
+      timeSpent: secondsPassed,
+    });
+
+    router.push(`?question=${Number(questionIndex) - 1}`);
   }
 
   return (
@@ -77,12 +116,7 @@ export default function Questions() {
             {questionsBook.title}
           </h1>
         </div>
-        <div className="flex gap-2 py-2 px-5 border border-gray-500 rounded-[10px] absolute right-0">
-          <Image src={clockIcon} alt="Relógio" />
-          <div className="flex flex-wrap text-sm leading-normal content-center">
-            <span>00</span>:<span>00</span>:<span>00</span>
-          </div>
-        </div>
+        <Timer secondsPassed={secondsPassed} />
       </div>
       <main className="w-[750px] mx-auto mt-16">
         <h2 className="font-bold">
@@ -124,22 +158,22 @@ export default function Questions() {
 
         <footer className="mt-8 border-t-2 border-gray-100 flex pt-6">
           {!isFirstQuestion && (
-            <Link
-              href={`?question=${Number(questionIndex) - 1}`}
+            <button
+              onClick={goToPreviousQuestion}
               className="flex flex-wrap gap-2 content-center font-inter"
             >
               <Image src={arrowLeftIcon} alt="Anterior" />
               <span>Anterior</span>
-            </Link>
+            </button>
           )}
           {!isLastQuestion && (
-            <Link
-              href={`?question=${Number(questionIndex) + 1}`}
+            <button
+              onClick={goToNextQuestion}
               className="flex flex-wrap gap-2 content-center font-inter ml-auto"
             >
               <span>Próxima</span>
               <Image src={arrowRightIcon} alt="Próxima" />
-            </Link>
+            </button>
           )}
         </footer>
       </main>
