@@ -1,7 +1,11 @@
+'use client'
+
 import Image from "next/image";
 import editIcon from "@/app/icons/edit.svg";
+import { useRouter } from "next/navigation";
 
 export interface QuestionsBook {
+  id: number;
   title: string;
   questionsNumber: number;
   answered: boolean;
@@ -12,9 +16,11 @@ interface QuestionsBookProps {
 }
 
 export function QuestionsBook({ bookData }: QuestionsBookProps) {
+  const router = useRouter()
+
   return (
     <div className="border border-gray-300 rounded-[20px] p-6 flex flex-col gap-5">
-      <Image width={18} height={18} src={editIcon} alt="Editar" />
+      <Image width={18} height={18} src={editIcon} alt="Lápis" />
       <div>
         <h2 className="font-bold text-purple-900">
           {bookData.title}
@@ -29,6 +35,7 @@ export function QuestionsBook({ bookData }: QuestionsBookProps) {
       <button
         className="enabled:bg-gradient-to-r from-purple-400 to-purple-300 font-bold text-white rounded-full p-2 disabled:cursor-not-allowed disabled:bg-purple-100"
         disabled={bookData.answered}
+        onClick={() => router.push(`/book/${bookData.id}`)}
       >
         Responder
       </button>
